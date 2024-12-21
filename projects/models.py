@@ -1,4 +1,5 @@
 from django.db import models
+from django.forms import ValidationError
 from shared.models import BaseModel
 
 # Create your models here.
@@ -31,11 +32,14 @@ class Review(BaseModel):
   
 
 class Tag(BaseModel):
-  name = models.CharField(max_length=40, unique=True)
+  name = models.CharField(max_length=32, unique=True)
 
+  # Enforce case-insensitive uniqueness
   def save(self, *args, **kwargs):
-    self.name = self.name.capitalize()
-    return super().save(*args, **kwargs)
+    # self.name = self.name.lower()
+    if Tag.objects.filter(name__iexact=self.name).exists():
+      raise ValidationError(f'Tag "{self.name}" already exists.')
+    super(Tag, self).save(*args, **kwargs)
 
   def __str__(self):
     return self.name

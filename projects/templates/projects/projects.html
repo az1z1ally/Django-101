@@ -3,10 +3,29 @@
 {% block content %}
 
 <h1>Projects</h1>
-<ul>
-  {% for project in projects %}
-    <li><a href="{% url 'project' project.id %}">{{ project.title }}</a></li>
-  {% endfor %}
-</ul>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Project</th>
+        <th>+Ve Votes</th>
+        <th>Total Votes</th>
+        <th>Created On</th>
+      </tr>
+    </thead>
 
+    <tbody>
+      {% for project in projects %}
+        <tr>
+          <td>{{ forloop.counter }}</td> <!-- Using forloop.counter for 1-based index -->
+          <!-- <td>{{ forloop.counter0 }}</td> --> <!-- Uncomment this line for 0-based index -->
+          <td>{{ project.title }}</td>
+          <td>{{ project.votes_ratio }}%</td>
+          <td>{{ project.votes_total }}</td>
+          <td>{{ project.created_on }}</td>
+          <td><a href="{% url 'project' project.id %}">View</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
