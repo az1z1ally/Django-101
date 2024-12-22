@@ -24,18 +24,23 @@
 
 - Django provides tools and configurations to manage and serve static files efficiently.
 
-- The STATIC_URL, STATICFILES_DIRS and STATIC_ROOT settings in settings.py help in defining how and where static files are stored and served.
+- The `STATIC_URL, STATICFILES_DIRS and STATIC_ROOT` settings in settings.py help in defining how and where static files are stored and served.
 
-- During development, the django.contrib.staticfiles app makes it easy to serve static files locally. In production, these files are typically served by a web server or CDN (Content Delivery Network).
+- During development, the `django.contrib.staticfiles `app makes it easy to serve static files locally. In production, these files are typically served by a web server or CDN (Content Delivery Network).
 
 `In settings.py`
-URL to use when referring to static files
+
+#### URL to use when referring to static files
+
 `STATIC_URL = 'static/'`
 
-Directories where Django will look for static files
+#### Directories where Django will look for static files
+
 `STATICFILES_DIRS = [
   BASE_DIR / 'static',
 ]
 `
-Directory where collected static files will be stored
+
+#### Directory where collected static files will be stored
+
 `STATIC_ROOT = BASE_DIR / 'staticfiles'`
