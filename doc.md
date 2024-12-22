@@ -4,9 +4,9 @@
 
 1. ### Unchanging Content:
 
-Static files contain fixed content that doesn't change unless manually updated by the developer.
+- Static files contain fixed content that doesn't change unless manually updated by the developer.
 
-Examples include stylesheets (CSS), scripts (JavaScript), images, fonts, and other assets that enhance the presentation and functionality of a web application.
+- Examples include stylesheets (CSS), scripts (JavaScript), images, fonts, and other assets that enhance the presentation and functionality of a web application.
 
 2. ### Client-Side Execution:
 
@@ -24,6 +24,18 @@ Examples include stylesheets (CSS), scripts (JavaScript), images, fonts, and oth
 
 - Django provides tools and configurations to manage and serve static files efficiently.
 
-- The STATIC_URL and STATICFILES_DIRS settings in settings.py help in defining how and where static files are stored and served.
+- The STATIC_URL, STATICFILES_DIRS and STATIC_ROOT settings in settings.py help in defining how and where static files are stored and served.
 
 - During development, the django.contrib.staticfiles app makes it easy to serve static files locally. In production, these files are typically served by a web server or CDN (Content Delivery Network).
+
+`In settings.py`
+URL to use when referring to static files
+`STATIC_URL = 'static/'`
+
+Directories where Django will look for static files
+`STATICFILES_DIRS = [
+  BASE_DIR / 'static',
+]
+`
+Directory where collected static files will be stored
+`STATIC_ROOT = BASE_DIR / 'staticfiles'`
