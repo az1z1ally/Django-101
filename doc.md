@@ -41,6 +41,10 @@
 ]
 `
 
+#### Directory where user uploaded content will be stored
+
+`MEDIA_ROOT = BASE_DIR / 'static/uploads'`
+
 #### Directory where collected static files will be stored
 
 `STATIC_ROOT = BASE_DIR / 'staticfiles'`
