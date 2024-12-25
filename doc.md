@@ -34,6 +34,10 @@
 
 `STATIC_URL = 'static/'`
 
+#### URL to use when referring to user uploaded contents
+
+`MEDIA_URL = '/uploads/'`
+
 #### Directories where Django will look for static files
 
 `STATICFILES_DIRS = [
@@ -41,7 +45,7 @@
 ]
 `
 
-#### Directory where user uploaded content will be stored
+#### Directory where user uploaded contents will be stored
 
 `MEDIA_ROOT = BASE_DIR / 'static/uploads'`
 
