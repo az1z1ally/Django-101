@@ -1,9 +1,11 @@
 from django.db import models
 from django.forms import ValidationError
 from shared.models import BaseModel
+from users.models import Profile
 
 # Create your models here.
 class Project(BaseModel):
+  owner = models.ForeignKey(Profile, on_delete=models.SET_NULL, related_name='projects', null=True, blank=True)
   title = models.CharField(max_length=200)
   description = models.TextField(null=True, blank=True)
   featured_image = models.ImageField(null=True, blank=True, default='default.jpg')
