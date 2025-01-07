@@ -1,9 +1,10 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 
 from shared.models import BaseModel
 
 # Create your models here.
+User = get_user_model() # Return the user model that is active in this project.
 
 class Profile(BaseModel):
   user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -18,7 +19,7 @@ class Profile(BaseModel):
   social_x = models.CharField(max_length=200, blank=True, null=True)
   social_linkedin = models.CharField(max_length=200, blank=True, null=True)
   social_youtube = models.CharField(max_length=200, blank=True, null=True)
-  website = models.CharField(max_length=200, blank=True, null=True)
+  personal_website = models.CharField(max_length=200, blank=True, null=True)
 
   def __str__(self):
     return str(self.username) # wrapped username into a str() to ensure we always get back a string since it can be null.
@@ -30,3 +31,12 @@ class Profile(BaseModel):
     except:
       url = ''
     return url
+  
+
+class Skill(models.Model):
+  owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
+  name = models.CharField(max_length=200, blank=True, null=True)
+  description = models.TextField(null=True, blank=True)
+
+  def __str__(self):
+    return str(self.name)
