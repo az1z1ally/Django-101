@@ -1,3 +1,5 @@
+## DJANGO STATIC FILES
+
 `In Django, CSS, JavaScript, images, and other external files are referred to as static files. This terminology is used because these files are static, meaning they do not change in response to user inputs or interactions. They remain the same and are served directly to the user's browser without any server-side processing.`
 
 ## Key Points:

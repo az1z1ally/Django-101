@@ -11,7 +11,7 @@
                   {% csrf_token %}
                   <p>Are you sure you want to delete "{{object}}"?</p>
 
-                  <a class="btn btn--sub btn--lg  my-md" href="{{request.GET.next}}">Go Back</a>
+                  <a class="btn btn--sub btn--lg  my-md" href="{{request.META.HTTP_REFERER|default:'/'}}">Go Back</a>
                   <input class="btn btn--sub btn--lg  my-md" type="submit" value="Confirm" />
               </form>
           </div>
