@@ -1,7 +1,61 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.contrib import messages
+from django.contrib.auth import authenticate, get_user_model, login, logout
+
+from shared.helpers.functions import get_redirect_url
+
 from .models import Profile
 
 # Create your views here.
+User = get_user_model()
+
+def loginPage(request):
+  if request.user.is_authenticated:
+    return redirect('/')
+
+  if request.method == 'POST':
+    username = request.POST['username'].lower()
+    password = request.POST['password']
+    next_url = request.GET.get('next', '/') # Retrieve the 'next' parameter
+
+    try:
+      user_exists = User.objects.filter(username=username).exists() # Check if the user exist in the db
+      if user_exists:
+        user=authenticate(request, username=username, password=password)
+        if user is not None:
+          login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
+          # return redirect(request.GET['next'] if 'next' in request.GET else '/')
+          return redirect(next_url) # Redirect to the 'next' URL or the default URL
+        else:
+          messages.error(request, 'Username or password is incorrect! ⚠️⚡')
+      else:
+        messages.error(request, 'Username or password is incorrect! ⚠️⚡')
+
+    except Exception as e:
+      messages.error(request, 'Failed to authenticate the user! ⚠️⚡')
+
+  context = {'page': 'login'}
+  return render(request, 'users/login_register.html', context)
+
+
+def registerPage(request):
+  context = {'page': 'register'}
+  return render(request, 'users/login_register.html', context)
+
+
+def resetPasswd(request):
+  pass
+
+
+def logoutPage(request):
+  url_with_parameters = get_redirect_url(request, 'login')
+
+  if request.user.is_authenticated:
+    logout(request) # Remove the authenticated user's ID from the request and flush their session data
+    messages.info(request, 'User was logged out successfully! 🤗')
+  # Redirect to the URL with parameters
+  return redirect(url_with_parameters)
+  
 
 def profiles(request):
   profiles = Profile.objects.all()

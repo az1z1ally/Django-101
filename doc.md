@@ -52,3 +52,19 @@
 #### Directory where collected static files will be stored
 
 `STATIC_ROOT = BASE_DIR / 'staticfiles'`
+
+## NEXT PARAMETER
+
+In Django, the next parameter is typically used for redirection purposes. It's a common pattern in authentication flows, especially when you want to redirect users to a specific page after they log in. The next parameter in the URL contains the path to the destination page the user initially attempted to visit before being prompted to log in.
+
+For example, if a user tries to access a restricted page, like `/dashboard`, but isn't logged in, they might be redirected to the login page with a URL like this: `/login/?next=/dashboard`. After successful authentication, your login view can use the next parameter to redirect the user back to `/dashboard`.
+
+#### Here's a brief breakdown:
+
+1. `User Attempts to Access a Restricted Page:` A user tries to go to a page that requires authentication.
+
+2. `Redirection to Login Page with next Parameter:` They are redirected to the login page with the next parameter in the query string, indicating where they wanted to go.
+
+3. `After Login:` Upon successful login, the view retrieves the next parameter value and redirects the user to that page.
+
+Using the next parameter ensures a smooth user experience by taking them directly to the page they intended to visit, rather than a default page.

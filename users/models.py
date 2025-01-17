@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.forms import ValidationError
 
 from shared.models import BaseModel
 
@@ -8,8 +9,8 @@ User = get_user_model() # Return the user model that is active in this project.
 
 class Profile(BaseModel):
   user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-  username = models.CharField(max_length=200, blank=True, null=True)
-  email = models.EmailField(max_length=200, null=True, blank=True)
+  username = models.CharField(max_length=200, unique=True, blank=True, null=True)
+  email = models.EmailField(max_length=200, unique=True, null=True, blank=True)
   first_name = models.CharField(max_length=200, blank=True, null=True)
   last_name = models.CharField(max_length=200, blank=True, null=True)
   location = models.CharField(max_length=200, blank=True, null=True, default='Earth')
@@ -32,6 +33,19 @@ class Profile(BaseModel):
     except:
       url = ''
     return url
+  
+  # Enforce case-insensitive uniqueness
+  def save(self, *args, **kwargs):
+    self.username = self.username.lower()
+    self.email = self.email.lower()
+
+    if Profile.objects.filter(username__iexact=self.username).exists():
+      raise ValidationError(f'"{self.username}" already exists.')
+    
+    if Profile.objects.filter(email__iexact=self.email).exists():
+      raise ValidationError(f'"{self.email}" already exists.')
+    
+    super(Profile, self).save(*args, **kwargs)
   
 
 class Skill(models.Model):
