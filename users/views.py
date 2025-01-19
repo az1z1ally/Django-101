@@ -1,15 +1,15 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required
 
 from shared.helpers.functions import get_redirect_url
-
 from .models import Profile
 
 # Create your views here.
 User = get_user_model()
 
-def loginPage(request):
+def loginUser(request):
   if request.user.is_authenticated:
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -25,6 +25,7 @@ def loginPage(request):
         if user is not None:
           login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
           # return redirect(request.GET['next'] if 'next' in request.GET else '/')
+          # messages.info(request, f'welcome back, {user.username} 🤗')
           return redirect(next_url) # Redirect to the 'next' URL or the default URL
         else:
           messages.error(request, 'Username or password is incorrect! ⚠️⚡')
@@ -43,11 +44,15 @@ def registerPage(request):
   return render(request, 'users/login_register.html', context)
 
 
-def resetPasswd(request):
+def resetPassword(request):
   pass
 
 
-def logoutPage(request):
+def changePassword(request):
+  pass
+
+
+def logoutUser(request):
   url_with_parameters = get_redirect_url(request, 'login')
   if request.user.is_authenticated:
     logout(request) # Remove the authenticated user's ID from the request and flush their session data
