@@ -1,7 +1,9 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
 from .models import Profile
@@ -40,7 +42,26 @@ def loginUser(request):
 
 
 def registerPage(request):
-  context = {'page': 'register'}
+  form = UserCreationForm()
+
+  if request.method == 'POST':
+    form = UserCreationForm(request.POST)
+    if form.is_valid(): 
+      user = form.save(commit=False)
+      user.username = user.username.lower()
+      user.save()
+      messages.success(request, 'User Account was created successfully! 🤗✅')
+      
+      if user is not None:
+          login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
+          return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
+      else:
+        messages.error(request, 'Login failed! ⚠️⚡')
+
+    else:
+      messages.error(request, 'An error has occurred during registration! ⚠️⚡')
+
+  context = {'page': 'register', 'form': form}
   return render(request, 'users/login_register.html', context)
 
 

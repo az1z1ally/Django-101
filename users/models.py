@@ -39,10 +39,10 @@ class Profile(BaseModel):
     self.username = self.username.lower()
     self.email = self.email.lower()
 
-    if Profile.objects.filter(username__iexact=self.username).exists():
+    if Profile.objects.filter(username__iexact=self.username).exists() and self.username != '':
       raise ValidationError(f'"{self.username}" already exists.')
     
-    if Profile.objects.filter(email__iexact=self.email).exists():
+    if Profile.objects.filter(email__iexact=self.email).exists() and self.email != '':
       raise ValidationError(f'"{self.email}" already exists.')
     
     super(Profile, self).save(*args, **kwargs)
