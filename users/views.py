@@ -73,11 +73,11 @@ def changePassword(request):
   pass
 
 
+@login_required(login_url='login')
 def logoutUser(request):
   url_with_parameters = get_redirect_url(request, 'login')
-  if request.user.is_authenticated:
-    logout(request) # Remove the authenticated user's ID from the request and flush their session data
-    messages.info(request, 'User was logged out successfully! 🤗')
+  logout(request) # Remove the authenticated user's ID from the request and flush their session data
+  messages.info(request, 'User was logged out successfully! 🤗')
 
   # Redirect to the URL with parameters
   return redirect(url_with_parameters)
