@@ -9,19 +9,20 @@
             <div class="column column--1of3">
                 <div class="card text-center">
                     <div class="card__body dev">
+                        {% if request.user.profile.id == profile.id %}
+                        <a class="tag tag--pill tag--main settings__btn" href="#"><i class="im im-edit"></i> Edit</a>
+                        {% endif %}
                         <img class="avatar avatar--xl" src="{{ profile.imageURL }}" />
                         <h2 class="dev__name">{{profile.first_name | default:''}} {{profile.last_name | default:''}}</h2>
                         <p class="dev__title">{{profile.short_intro | default:''}}</p>
                         <p class="dev__location">Based in {{profile.location}}</p>
                         <ul class="dev__social">
-
                             {% if profile.social_github %}
                             <li>
                                 <a title="Github" href="{{profile.social_github}}" target="_blank"><i
                                     class="im im-github"></i></a>
                             </li>
                             {% endif %}
-
 
                             {% if profile.social_x %}
                             <li>

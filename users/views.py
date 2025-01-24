@@ -84,7 +84,12 @@ def logoutUser(request):
   
 
 def profiles(request):
-  profiles = Profile.objects.all()
+  if request.user.is_authenticated:
+    current_user = request.user
+    profiles = Profile.objects.exclude(user=current_user)
+  else:
+    profiles = Profile.objects.all()
+
   context = {'profiles': profiles}
   return render(request, 'users/profiles.html', context)
 
@@ -94,4 +99,11 @@ def userProfile(request, pk):
   topSkills = profile.skill_set.exclude(description__exact='')
   otherSkills = profile.skill_set.filter(description='')
   context = {'profile': profile, 'topSkills': topSkills, 'otherSkills': otherSkills}
-  return render(request, 'users/user-profile.html', context)
+  return render(request, 'users/user_profile.html', context)
+
+
+@login_required(login_url='login')
+def userAccount(request):
+  profile = request.user.profile
+  context = {'profile': profile}
+  return render(request, 'users/account.html', context)
