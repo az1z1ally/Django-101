@@ -1,11 +1,11 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
+from .forms import CustomUserCreationForm
 from .models import Profile
 
 # Create your views here.
@@ -27,8 +27,8 @@ def loginUser(request):
         if user is not None:
           login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
           # return redirect(request.GET['next'] if 'next' in request.GET else '/')
-          # messages.info(request, f'welcome back, {user.username} 🤗')
           return redirect(next_url) # Redirect to the 'next' URL or the default URL
+          # messages.info(request, f'welcome back, {user.username} 🤗')
         else:
           messages.error(request, 'Username or password is incorrect! ⚠️⚡')
       else:
@@ -42,10 +42,10 @@ def loginUser(request):
 
 
 def registerPage(request):
-  form = UserCreationForm()
+  form = CustomUserCreationForm()
 
   if request.method == 'POST':
-    form = UserCreationForm(request.POST)
+    form = CustomUserCreationForm(request.POST)
     if form.is_valid(): 
       user = form.save(commit=False)
       user.username = user.username.lower()

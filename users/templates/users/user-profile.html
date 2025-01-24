@@ -10,15 +10,15 @@
                 <div class="card text-center">
                     <div class="card__body dev">
                         <img class="avatar avatar--xl" src="{{ profile.imageURL }}" />
-                        <h2 class="dev__name">{{profile.first_name}} {{profile.last_name}}</h2>
-                        <p class="dev__title">{{profile.short_intro}}</p>
+                        <h2 class="dev__name">{{profile.first_name | default:''}} {{profile.last_name | default:''}}</h2>
+                        <p class="dev__title">{{profile.short_intro | default:''}}</p>
                         <p class="dev__location">Based in {{profile.location}}</p>
                         <ul class="dev__social">
 
                             {% if profile.social_github %}
                             <li>
                                 <a title="Github" href="{{profile.social_github}}" target="_blank"><i
-                                        class="im im-github"></i></a>
+                                    class="im im-github"></i></a>
                             </li>
                             {% endif %}
 
@@ -26,21 +26,21 @@
                             {% if profile.social_x %}
                             <li>
                                 <a title="X" href="{{profile.social_x}}" target="_blank"><i
-                                        class="im im-twitter"></i></a>
+                                    class="im im-twitter"></i></a>
                             </li>
                             {% endif %}
 
                             {% if profile.social_linkedin %}
                             <li>
                                 <a title="LinkedIn" href="{{profile.social_linkedin}}" target="_blank"><i
-                                        class="im im-linkedin"></i></a>
+                                    class="im im-linkedin"></i></a>
                             </li>
                             {% endif %}
 
                             {% if profile.personal_website %}
                             <li>
                                 <a title="Personal Website" href="{{profile.personal_website}}" target="_blank"><i
-                                        class="im im-globe"></i></a>
+                                    class="im im-globe"></i></a>
                             </li>
                             {% endif %}
 
@@ -55,7 +55,7 @@
             <div class="column column--2of3">
                 <div class="devInfo">
                     <h3 class="devInfo__title">About Me</h3>
-                    <p class="devInfo__about">{{profile.bio}}</p>
+                    <p class="devInfo__about">{{profile.bio | default:''}}</p>
                 </div>
                 <div class="devInfo">
                     <h3 class="devInfo__title">Skills</h3>
