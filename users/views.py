@@ -1,11 +1,11 @@
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
-from .forms import CustomUserCreationForm, ProfileForm
+from .forms import CustomPasswordChangeForm, CustomUserCreationForm, ProfileForm
 from .models import Profile
 
 # Create your views here.
@@ -70,8 +70,25 @@ def resetPassword(request):
   pass
 
 
+@login_required(login_url='login')
 def changePassword(request):
-  pass
+  current_user = request.user
+  form = CustomPasswordChangeForm(current_user)
+  next_url = request.GET.get('next', 'account')
+
+  if request.method == 'POST':
+    form = CustomPasswordChangeForm(current_user, request.POST)
+    if form.is_valid():
+      user = form.save()
+      update_session_auth_hash(request, user)  # Important to update the session with the new password
+      messages.success(request, 'Your password was successfully updated! 🤗✅')
+      return redirect(next_url)
+    
+    else:
+      messages.error(request, 'An error has occurred during password change, try again later! ⚠️⚡')
+  
+  context = {'form': form}
+  return render(request, 'users/change_password.html', context)
 
 
 @login_required(login_url='login')
@@ -124,3 +141,7 @@ def editAccount(request):
   
   context = {'form': form}
   return render(request, 'users/profile_form.html', context)
+
+
+def deleteAccount(request):
+  pass

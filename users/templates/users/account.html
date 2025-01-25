@@ -106,9 +106,13 @@
           <tr>
             <td><a class="btn--sub btn--md" href="{% url 'projects' %}">See More</a></td>
           </tr>
-          
         </table>
 
+        <div class="settings">
+          <h3 class="settings__title">Password Settings</h3>
+          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="{% url 'change-password' %}?next=/account"><i
+            class="im im-lock"></i> Change Password</a>
+        </div>
       </div>
     </div>
   </div>

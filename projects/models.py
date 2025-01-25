@@ -38,10 +38,13 @@ class Tag(BaseModel):
   name = models.CharField(max_length=32, unique=True)
 
   # Enforce case-insensitive uniqueness
-  def save(self, *args, **kwargs):
+  def clean(self):
     # self.name = self.name.lower()
     if Tag.objects.filter(name__iexact=self.name).exists():
       raise ValidationError(f'Tag "{self.name}" already exists.')
+
+  def save(self, *args, **kwargs):
+    self.full_clean() # This will call the clean() method
     super(Tag, self).save(*args, **kwargs)
 
   def __str__(self):
