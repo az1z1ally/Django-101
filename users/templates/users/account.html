@@ -9,7 +9,7 @@
       <div class="column column--1of3">
         <div class="card text-center">
           <div class="card__body dev">
-            <a class="tag tag--pill tag--main settings__btn" href="#"><i class="im im-edit"></i> Edit</a>
+            <a class="tag tag--pill tag--main settings__btn" href="{% url 'edit-account' %}"><i class="im im-edit"></i> Edit</a>
             <img class="avatar avatar--xl dev__avatar" src="{{profile.imageURL}}" />
             <h2 class="dev__name">{{profile.first_name | default:''}} {{profile.last_name | default:''}}</h2>
             <p class="dev__title">{{profile.short_intro | default:''}}</p>
@@ -79,12 +79,12 @@
 
         <div class="settings">
           <h3 class="settings__title">Projects</h3>
-          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="#"><i
+          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="{% url 'create-project' %}"><i
               class="im im-plus"></i> Add Project</a>
         </div>
 
         <table class="settings__table">
-          {% for project in profile.projects.all %}
+          {% for project in projects %}
           <tr>
             <td class="settings__thumbnail">
               <a href="{% url 'project' project.id %}"><img src="{{project.featured_image.url}}" alt="Project Thumbnail" /></a>
@@ -94,16 +94,21 @@
               <p>{{project.description|slice:"150"}}</p>
             </td>
             <td class="settings__tableActions">
-              <a class="tag tag--pill tag--main settings__btn" href="#"><i
-                  class="im im-edit"></i> Edit</a>
+              <a class="tag tag--pill tag--main settings__btn" href="{% url 'update-project' project.id %}?next=/account"><i
+                class="im im-edit"></i> Edit</a>
               <a class="tag tag--pill tag--main settings__btn"
-                href="#"><i class="im im-x-mark-circle-o"></i>
+                href="{% url 'delete-project'  project.id %}?next=/account"><i class="im im-x-mark-circle-o"></i>
                 Delete</a>
             </td>
           </tr>
           {% endfor %}
 
+          <tr>
+            <td><a class="btn--sub btn--md" href="{% url 'projects' %}">See More</a></td>
+          </tr>
+          
         </table>
+
       </div>
     </div>
   </div>

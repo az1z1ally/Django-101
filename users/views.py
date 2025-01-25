@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProfileForm
 from .models import Profile
 
 # Create your views here.
@@ -54,7 +54,8 @@ def registerPage(request):
       
       if user is not None:
           login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
-          return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
+          # return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
+          return redirect('edit-account')
       else:
         messages.error(request, 'Login failed! ⚠️⚡')
 
@@ -105,5 +106,21 @@ def userProfile(request, pk):
 @login_required(login_url='login')
 def userAccount(request):
   profile = request.user.profile
-  context = {'profile': profile}
+  projects = profile.projects.all()[:5]  # Fetch only the first 5 projects
+  context = {'profile': profile, 'projects': projects}
   return render(request, 'users/account.html', context)
+
+
+@login_required(login_url='login')
+def editAccount(request):
+  profile = request.user.profile
+  form = ProfileForm(instance=profile)
+
+  if request.method == 'POST':
+    form = ProfileForm(request.POST, request.FILES, instance=profile)
+    if form.is_valid():
+      form.save()
+      return redirect('account')
+  
+  context = {'form': form}
+  return render(request, 'users/profile_form.html', context)

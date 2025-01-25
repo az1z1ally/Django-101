@@ -34,12 +34,13 @@ def createProject(request):
 def updateProject(request, pk):
   project = Project.objects.get(id=pk)
   form = ProjectForm(instance=project)
+  next_url = request.GET.get('next', 'projects')
 
   if request.method == 'POST':
     form = ProjectForm(request.POST, request.FILES, instance=project)
     if form.is_valid():
       form.save()
-      return redirect('projects')
+      return redirect(next_url)
 
   context = {'form': form}
   return render(request, 'projects/project_form.html', context)
@@ -48,10 +49,11 @@ def updateProject(request, pk):
 @login_required(login_url='login')
 def deleteProject(request, pk):
   project = Project.objects.get(id=pk)
+  next_url = request.GET.get('next', 'projects')
 
   if request.method == 'POST':
     project.delete()
-    return redirect('projects')
+    return redirect(next_url)
 
   context = {'object': project}
   return render(request, 'delete_template.html', context)

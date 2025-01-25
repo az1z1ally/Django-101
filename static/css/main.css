@@ -811,7 +811,8 @@ img {
   margin-bottom: 3rem;
 }
 
-.backButton {
+.backButton,
+.forwardButton {
   background: var(--color-main-light);
   color: var(--color-main);
   width: 4rem;
@@ -822,7 +823,8 @@ img {
   border-radius: 50%;
 }
 
-.backButton i {
+.backButton i,
+.forwardButton i {
   font-size: 1.8rem;
 }
 
