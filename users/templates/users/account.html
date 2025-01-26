@@ -53,7 +53,7 @@
         </div>
         <div class="settings">
           <h3 class="settings__title">Skills</h3>
-          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="#"><i
+          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="{% url 'create-skill' %}?next=/account"><i
               class="im im-plus"></i> Add Skill</a>
         </div>
 
@@ -67,9 +67,9 @@
               </p>
             </td>
             <td class="settings__tableActions">
-              <a class="tag tag--pill tag--main settings__btn" href="#"><i
+              <a class="tag tag--pill tag--main settings__btn" href="{% url 'edit-skill' skill.id %}?next=/account""><i
                   class="im im-edit"></i> Edit</a>
-              <a class="tag tag--pill tag--main settings__btn" href="#"><i
+              <a class="tag tag--pill tag--main settings__btn" href="{% url 'delete-skill' skill.id %}?next=/account"><i
                   class="im im-x-mark-circle-o"></i>
                 Delete</a>
             </td>
@@ -103,9 +103,11 @@
           </tr>
           {% endfor %}
 
+          {% if projects|length > 5 %}
           <tr>
             <td><a class="btn--sub btn--md" href="{% url 'projects' %}">See More</a></td>
           </tr>
+          {% endif %}
         </table>
 
         <div class="settings">

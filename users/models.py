@@ -42,9 +42,9 @@ class Profile(BaseModel):
     super(Profile, self).save(*args, **kwargs)
   
 
-class Skill(models.Model):
+class Skill(BaseModel):
   owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
-  name = models.CharField(max_length=200, blank=True, null=True)
+  name = models.CharField(max_length=32, blank=True, null=True)
   description = models.TextField(null=True, blank=True)
 
   def __str__(self):

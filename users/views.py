@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
-from .forms import CustomPasswordChangeForm, CustomUserCreationForm, ProfileForm
+from .forms import CustomPasswordChangeForm, CustomUserCreationForm, ProfileForm, SkillForm
 from .models import Profile
 
 # Create your views here.
@@ -137,7 +137,11 @@ def editAccount(request):
     form = ProfileForm(request.POST, request.FILES, instance=profile)
     if form.is_valid():
       form.save()
+      messages.success(request, f'Account updated successfully! 🤗✅')
       return redirect('account')
+    
+    else:
+      messages.error(request, f'Failed to update your account, try again! ⚡⚠️')
   
   context = {'form': form}
   return render(request, 'users/profile_form.html', context)
@@ -145,3 +149,69 @@ def editAccount(request):
 
 def deleteAccount(request):
   pass
+
+
+# Skills CRUD
+@login_required(login_url='login')
+def createSkill(request):
+  owner = request.user.profile
+  next_url = request.GET.get('next', 'account')
+  form = SkillForm()
+
+  if request.method == 'POST':
+    form = SkillForm(request.POST)
+    if form.is_valid():
+      skill = form.save(commit=False)
+      skill.owner = owner
+      skill.save()
+      messages.success(request, f'Skill added successfully! 🤗✅')
+      return redirect(next_url)
+    
+    else:
+      messages.error(request, f'Failed to add a skill, try again! ⚡⚠️')
+
+  context = {'form': form}
+  return render(request, 'users/skill_form.html', context)
+
+
+@login_required(login_url='login')
+def editSkill(request, pk):
+  owner = request.user.profile
+  next_url = request.GET.get('next', 'account')
+  try:
+    skill = owner.skill_set.get(id=pk) # Prevent user from editing other users skills
+  except:
+    return redirect(next_url)
+  
+  form = SkillForm(instance=skill)
+
+  if request.method == 'POST':
+    form = SkillForm(request.POST, instance=skill)
+    if form.is_valid():
+      form.save()
+      messages.success(request, f'Skill updated successfully! 🤗✅')
+      return redirect(next_url)
+    
+    else:
+      messages.error(request, f'Failed to update skill, try again! ⚡⚠️')
+
+  context = {'form': form}
+  return render(request, 'users/skill_form.html', context)
+
+
+@login_required(login_url='login')
+def deleteSkill(request, pk):
+  owner = request.user.profile
+  next_url = request.GET.get('next', 'account')
+  try:
+    skill = owner.skill_set.get(id=pk) # Prevent user from deleting other users skills
+  except:
+    return redirect(next_url)
+
+  if request.POST:
+    skill.delete()
+    messages.success(request, f'Skill removed successfully! 🤗✅')
+    return redirect(next_url)
+  
+  context = {'object': skill}
+  return render(request, 'delete_template.html', context)

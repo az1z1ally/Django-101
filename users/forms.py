@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import get_user_model
-from .models import Profile
+from .models import Profile, Skill
 
 User = get_user_model()
 
@@ -31,7 +31,7 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
   def __init__(self, *args, **kwargs):
     super(CustomPasswordChangeForm, self).__init__(*args, **kwargs)
-    # sometimes the Meta class approach doesn't work as expected for built-in forms. Another way to update labels is to set them directly in the __init__ method:
+    # sometimes the Meta class approach doesn't work as expected for built-in forms. Another way to update labels is to set them directly in the __init__ method
     self.fields['old_password'].label = 'Your current password'
     self.fields['new_password1'].label = 'New password'
     self.fields['new_password2'].label = 'Confirm new password'
@@ -53,6 +53,23 @@ class ProfileForm(ModelForm):
 
   def __init__(self, *args, **kwargs):
     super(ProfileForm, self).__init__(*args, **kwargs)
+
+    for name, field in self.fields.items():
+      field.widget.attrs.update({'class': 'input'})
+
+  
+
+class SkillForm(ModelForm):
+  class Meta:
+    model = Skill
+    fields = '__all__'
+    exclude = ['owner']
+    labels = {
+      'name': 'Skill Name',
+    }
+
+  def __init__(self, *args, **kwargs):
+    super(SkillForm, self).__init__(*args, **kwargs)
 
     for name, field in self.fields.items():
       field.widget.attrs.update({'class': 'input'})

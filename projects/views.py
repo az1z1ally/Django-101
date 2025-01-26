@@ -29,7 +29,11 @@ def createProject(request):
       project = form.save(commit=False)
       project.owner = profile
       project.save()
+      messages.success(request, f'Project created successfully! 🤗✅')
       return redirect(next_url)
+    
+    else:
+      messages.error(request, f'Failed to create the project! ⚡⚠️')
 
   context = {'form': form}
   return render(request, 'projects/project_form.html', context)
@@ -49,7 +53,11 @@ def updateProject(request, pk):
     form = ProjectForm(request.POST, request.FILES, instance=project)
     if form.is_valid():
       form.save()
+      messages.success(request, f'Project updated successfully! 🤗✅')
       return redirect(next_url)
+    
+    else:
+      messages.error(request, f'Failed to update the project! ⚡⚠️')
 
   context = {'form': form}
   return render(request, 'projects/project_form.html', context)
@@ -66,6 +74,7 @@ def deleteProject(request, pk):
 
   if request.method == 'POST':
     project.delete()
+    messages.success(request, f'Project removed successfully! 🤗✅')
     return redirect(next_url)
 
   context = {'object': project}
