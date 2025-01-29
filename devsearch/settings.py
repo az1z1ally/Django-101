@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 3rd-party apps
+    'django_filters',
+
+    # Created apps
     'projects.apps.ProjectsConfig',
     'users.apps.UsersConfig',
 ]

@@ -96,23 +96,23 @@
             <td class="settings__tableActions">
               <a class="tag tag--pill tag--main settings__btn" href="{% url 'update-project' project.id %}?next=/account"><i
                 class="im im-edit"></i> Edit</a>
-              <a class="tag tag--pill tag--main settings__btn"
+              <a class="tag tag--pill tag--main tag-md settings__btn"
                 href="{% url 'delete-project'  project.id %}?next=/account"><i class="im im-x-mark-circle-o"></i>
                 Delete</a>
             </td>
           </tr>
           {% endfor %}
 
-          {% if projects|length > 5 %}
+          {% if projects_gt_5 %}
           <tr>
-            <td><a class="btn--sub btn--md" href="{% url 'projects' %}">See More</a></td>
+            <td><a class="btn--sub btn--md" href="{% url 'projects' %}?owner__username={{profile.username}}">See More</a></td>
           </tr>
           {% endif %}
         </table>
 
         <div class="settings">
           <h3 class="settings__title">Password Settings</h3>
-          <a class="tag tag--pill tag--sub settings__btn tag--lg" href="{% url 'change-password' %}?next=/account"><i
+          <a class="tag tag--pill tag--sub settings__btn tag--md" href="{% url 'change-password' %}?next=/account"><i
             class="im im-lock"></i> Change Password</a>
         </div>
       </div>

@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.forms import ValidationError
+from django.core.exceptions import ValidationError
 
 from shared.models import BaseModel
 
@@ -46,6 +46,19 @@ class Skill(BaseModel):
   owner = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True)
   name = models.CharField(max_length=32, blank=True, null=True)
   description = models.TextField(null=True, blank=True)
+
+  class Meta:
+    unique_together = (('owner', 'name'),)  # Ensure unique skill names per user if required
+
+  # Prevent adding more than 10 skills
+  def clean(self):
+    print(self.owner)
+    if self.owner and self.owner.skill_set.count() >= 10:
+      raise ValidationError('You cannot add more than 10 skills.')
+
+  def save(self, *args, **kwargs):
+    self.full_clean() # This will call the clean() method
+    super(Skill, self).save(*args, **kwargs)
 
   def __str__(self):
     return str(self.name)

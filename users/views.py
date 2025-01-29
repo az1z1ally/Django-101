@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
 from shared.helpers.functions import get_redirect_url
+from users.filters import ProfileFilter, search_profiles
+from users.paginations import paginateProfiles
 from .forms import CustomPasswordChangeForm, CustomUserCreationForm, ProfileForm, SkillForm
 from .models import Profile
 
@@ -102,13 +104,15 @@ def logoutUser(request):
   
 
 def profiles(request):
-  if request.user.is_authenticated:
-    current_user = request.user
-    profiles = Profile.objects.exclude(user=current_user)
-  else:
-    profiles = Profile.objects.all()
+  # Apply filter to profiles queryset
+  search_query, profiles = search_profiles(request)
+  filter = ProfileFilter(request.GET, queryset=profiles)
+  filtered_profiles = filter.qs
+  
+  # Paginate the filtered queryset
+  paginator, page_obj, custom_range = paginateProfiles(request, filtered_profiles, 10)
 
-  context = {'profiles': profiles}
+  context = {'paginator': paginator, 'page_obj': page_obj, 'custom_range': custom_range, 'profiles': page_obj.object_list, 'search_query': search_query, 'filter': filter}
   return render(request, 'users/profiles.html', context)
 
 
@@ -123,8 +127,9 @@ def userProfile(request, pk):
 @login_required(login_url='login')
 def userAccount(request):
   profile = request.user.profile
+  projects_gt_5 = profile.projects.all().count() > 5
   projects = profile.projects.all()[:5]  # Fetch only the first 5 projects
-  context = {'profile': profile, 'projects': projects}
+  context = {'profile': profile, 'projects': projects, 'projects_gt_5': projects_gt_5}
   return render(request, 'users/account.html', context)
 
 
@@ -154,15 +159,20 @@ def deleteAccount(request):
 # Skills CRUD
 @login_required(login_url='login')
 def createSkill(request):
-  owner = request.user.profile
+  profile = request.user.profile
   next_url = request.GET.get('next', 'account')
   form = SkillForm()
+
+  # Check if the user already has 10 skills
+  if profile.skill_set.count() >= 10:
+    messages.error(request, f'You have reached the maximum limit of 10 skills. 🎯❌')
+    return redirect(next_url)
 
   if request.method == 'POST':
     form = SkillForm(request.POST)
     if form.is_valid():
       skill = form.save(commit=False)
-      skill.owner = owner
+      skill.owner = profile
       skill.save()
       messages.success(request, f'Skill added successfully! 🤗✅')
       return redirect(next_url)
@@ -176,10 +186,10 @@ def createSkill(request):
 
 @login_required(login_url='login')
 def editSkill(request, pk):
-  owner = request.user.profile
+  profile = request.user.profile
   next_url = request.GET.get('next', 'account')
   try:
-    skill = owner.skill_set.get(id=pk) # Prevent user from editing other users skills
+    skill = profile.skill_set.get(id=pk) # Prevent user from editing other users skills
   except:
     return redirect(next_url)
   

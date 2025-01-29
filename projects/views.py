@@ -2,13 +2,24 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+from projects.filters import ProjectFilter, search_projects
+from projects.paginations import paginateProjects
+
 from .forms import ProjectForm
 from .models import Project
 
 # Create your views here.
 def projects(request):
-  projectList = Project.objects.all()
-  context = {'projects': projectList}
+  search_query, projects = search_projects(request)
+
+   # Apply filter to the projects queryset
+  filter = ProjectFilter(request.GET, queryset=projects)
+  filtered_projects = filter.qs
+
+  # Paginate the filtered queryset
+  paginator, page_obj, custom_range = paginateProjects(request, filtered_projects, 10)
+
+  context = {'paginator': paginator, 'page_obj': page_obj, 'custom_range': custom_range, 'projects': page_obj.object_list, 'search_query': search_query, 'filter': filter}
   return render(request, 'projects/projects.html', context)
 
 

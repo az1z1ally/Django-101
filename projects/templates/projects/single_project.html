@@ -33,8 +33,13 @@
             
             <div class="column column--2of3">
                 <img class="singleProject__preview" src="{{ project.featured_image.url }}" alt="portfolio thumbnail" />
-                <a href=""
+                {% if project.owner %}
+                <a href="{% url 'user-profile' project.owner.id %}"
                     class="singleProject__developer">By {{ project.owner.first_name }} {{ project.owner.last_name }}</a>
+                {% else %}
+                    <span class="singleProject__developer">By Anonymous</span>
+                {% endif %}
+                
                 <h2 class="singleProject__title">{{project.title}}</h2>
                 <h3 class="singleProject__subtitle">About the Project</h3>
                 <div class="singleProject__info">
@@ -57,14 +62,14 @@
                         {% csrf_token %}
                         {% for field in form %}
                         <div class="form__field">
-                            <label for="formInput#textarea">{{field.label}}</label>
+                            <label for="{{field.id_for_label}}">{{field.label}}</label>
                             {{field}}
                         </div>
                         {% endfor %}
                         <input class="btn btn--sub btn--lg" type="submit" value="Add Review" />
                     </form>
                     {% else %}
-                    <!-- <a href="{% url 'login' %}?next={{request.path}}">Please login to leave a review</a> -->
+                    <a href="{% url 'login' %}?next={{request.path}}">Please login to leave a review</a>
                     {% endif %}
 
                     <div class="commentList">
