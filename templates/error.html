@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<main class="errorPage">
+  <div class="container">
+    <div class="errorPage__content">
+      <h1>Oops! An Error Occurred</h1>
+      <p>Sorry, something went wrong try again later! ⚡⚠️ </p>
+      <a class="btn--main btn--md" href="{{request.META.HTTP_REFERER|default:'/'}}">Please Go back</a>
+    </div>
+  </div>
+</main>
+{% endblock %}

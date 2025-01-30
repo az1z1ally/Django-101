@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from projects.filters import ProjectFilter, search_projects
 from projects.paginations import paginateProjects
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from .forms import ProjectForm
 from .models import Project
@@ -24,9 +25,20 @@ def projects(request):
 
 
 def project(request, pk):
-  projectObj = Project.objects.get(id=pk)
-  context = {'project': projectObj}
+  try:
+    projectObj = Project.objects.get(id=pk) # Prevent user from editing other users projects
+  except ObjectDoesNotExist:
+    # Handle the case where the project does not exist
+    return render(request, '404.html', status=404)
+  except MultipleObjectsReturned:
+    # Handle the case where multiple objects are returned
+    return render(request, 'error.html')
+
+  is_owner = request.user.profile == projectObj.owner and projectObj.owner is not None
+  context = {'project': projectObj, 'is_owner': is_owner}
+
   return render(request, 'projects/single_project.html', context)
+
 
 @login_required(login_url='login')
 def createProject(request):
