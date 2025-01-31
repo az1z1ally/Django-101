@@ -52,9 +52,10 @@ class Skill(BaseModel):
 
   # Prevent adding more than 10 skills
   def clean(self):
-    print(self.owner)
-    if self.owner and self.owner.skill_set.count() >= 10:
-      raise ValidationError('You cannot add more than 10 skills.')
+    if self.owner:
+      skills_count = self.owner.skill_set.exclude(pk=self.pk).count() # Without excluding self.pk it will be counted in count
+      if skills_count >= 10:
+        raise ValidationError('You cannot add more than 10 skills.')
 
   def save(self, *args, **kwargs):
     self.full_clean() # This will call the clean() method

@@ -26,7 +26,7 @@ def projects(request):
 
 def project(request, pk):
   try:
-    projectObj = Project.objects.get(id=pk) # Prevent user from editing other users projects
+    projectObj = Project.objects.get(id=pk)
   except ObjectDoesNotExist:
     # Handle the case where the project does not exist
     return render(request, '404.html', status=404)

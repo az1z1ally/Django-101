@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from shared.helpers.functions import get_redirect_url
 from users.filters import ProfileFilter, search_profiles
@@ -117,7 +117,15 @@ def profiles(request):
 
 
 def userProfile(request, pk):
-  profile = Profile.objects.get(id=pk)
+  try:
+    profile = Profile.objects.get(id=pk)
+  except ObjectDoesNotExist:
+    # Handle the case where the project does not exist
+    return render(request, '404.html', status=404)
+  except MultipleObjectsReturned:
+    # Handle the case where multiple objects are returned
+    return render(request, 'error.html')
+  
   topSkills = profile.skill_set.exclude(description__exact='')
   otherSkills = profile.skill_set.filter(description='')
   context = {'profile': profile, 'topSkills': topSkills, 'otherSkills': otherSkills}

@@ -57,7 +57,6 @@ class ProfileForm(ModelForm):
     for name, field in self.fields.items():
       field.widget.attrs.update({'class': 'input'})
 
-  
 
 class SkillForm(ModelForm):
   class Meta:
