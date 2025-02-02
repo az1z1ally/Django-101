@@ -17,6 +17,8 @@ class ProfileFilter(django_filters.FilterSet):
   bio = django_filters.CharFilter(lookup_expr='icontains')
   first_name = django_filters.CharFilter(lookup_expr='icontains')
   last_name = django_filters.CharFilter(lookup_expr='icontains')
+  skill__name = django_filters.CharFilter(lookup_expr='icontains')
+  
   skills = django_filters.ModelMultipleChoiceFilter(
     field_name='skill__name',
     to_field_name='name',
@@ -26,7 +28,7 @@ class ProfileFilter(django_filters.FilterSet):
 
   class Meta:
     model = Profile
-    fields = ['username', 'first_name', 'last_name', 'location', 'bio', 'short_intro', 'skills']
+    fields = ['username', 'first_name', 'last_name', 'location', 'bio', 'short_intro', 'skills', 'skill__name']
 
 
 '''Explanation:
