@@ -34,10 +34,9 @@ def project(request, pk):
     # Handle the case where multiple objects are returned
     return render(request, 'error.html')
 
-  is_owner = request.user.profile == projectObj.owner and projectObj.owner is not None
-  context = {'project': projectObj, 'is_owner': is_owner}
+  context = {'project': projectObj}
 
-  return render(request, 'projects/single_project.html', context)
+  return render(request, 'projects/project_details.html', context)
 
 
 @login_required(login_url='login')
