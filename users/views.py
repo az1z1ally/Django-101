@@ -60,7 +60,7 @@ def registerPage(request):
           
           if user is not None:
               login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
-              # return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
+              # return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified profile_details_id, redirect() takes the generated URL and redirects the user to that URL.
               return redirect('edit-account')
           else:
             messages.error(request, 'Login failed! ⚠️⚡')
@@ -136,7 +136,7 @@ def userProfile(request, pk):
   topSkills = profile.skill_set.exclude(description__exact='')
   otherSkills = profile.skill_set.filter(description='')
   context = {'profile': profile, 'topSkills': topSkills, 'otherSkills': otherSkills}
-  return render(request, 'users/user_profile.html', context)
+  return render(request, 'users/profile_details.html', context)
 
 
 @login_required(login_url='login')
