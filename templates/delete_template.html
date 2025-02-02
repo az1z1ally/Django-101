@@ -4,15 +4,17 @@
 
   <!-- Main Section -->
   <main class="formPage my-xl">
-      <div class="content-box">
+      <div class="content__box">
           <div class="formWrapper">
               <br>
               <form class="form" action="" method="POST">
                   {% csrf_token %}
                   <p>Are you sure you want to delete "{{object}}"?</p>
 
-                  <a class="btn btn--md my-md" href="{{request.META.HTTP_REFERER|default:'/'}}">Cancel</a>
-                  <input class="btn btn--main btn--md  my-md" type="submit" value="Confirm" />
+                  <div class="form__field--action my-md">
+                    <a class="btn btn--md" href="{{request.META.HTTP_REFERER|default:'/'}}">Cancel</a>
+                    <input class="btn btn--main btn--md" type="submit" value="Confirm" />
+                  </div>
               </form>
           </div>
       </div>

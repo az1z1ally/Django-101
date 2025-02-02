@@ -1,9 +1,8 @@
 from sys import stdout
+from django.db import transaction
 from django.db.models.signals import post_save, post_delete, pre_save
 from django.dispatch import receiver
-
 from django.contrib.auth import get_user_model
-
 from shared.helpers.functions import send_email
 from .models import Profile
 
@@ -13,39 +12,42 @@ from django.conf import settings
 User = get_user_model() # Return the user model that is active in this project.
 
 @receiver(post_save, sender=User)
-def createProfile(sender, instance, created, **kwargs):
+def create_profile(sender, instance, created, **kwargs):
   if created:
     user = instance
-    profile = Profile.objects.create(
-      user=user,
-      username=user.username,
-      email=user.email,
-      first_name=user.first_name,
-      last_name=user.last_name
-    )
 
-    subject = 'Welcome to DevSearch'
-    message = 'We are glad you are here!'
-    html_msg = f'<h1>{message}</h1>'
-    to_email = profile.email
-    from_email = settings.EMAIL_HOST_USER
+    # The transaction.atomic() block ensures that all operations within it are atomic—meaning they all succeed or none of them do.
+    with transaction.atomic():
+      profile = Profile.objects.create(
+        user=user,
+        username=user.username,
+        email=user.email,
+        first_name=user.first_name,
+        last_name=user.last_name
+      )
 
-    try:
-      # send_mail(
-      #   subject,
-      #   message,
-      #   from_email,
-      #   [to_email],
-      #   fail_silently=False,
-      # )
+      subject = 'Welcome to DevSearch'
+      message = 'We are glad you are here!'
+      html_msg = f'<h1>{message}</h1>'
+      to_email = profile.email
+      from_email = settings.EMAIL_HOST_USER
 
-      send_email(html=html_msg, text=message, subject=subject,  from_email=from_email, to_emails=[to_email])
-    except:
-      stdout.write(f'Email failed to send...')
+      try:
+        # send_mail(
+        #   subject,
+        #   message,
+        #   from_email,
+        #   [to_email],
+        #   fail_silently=False,
+        # )
+
+        send_email(html=html_msg, text=message, subject=subject,  from_email=from_email, to_emails=[to_email])
+      except:
+        stdout.write(f'Email failed to send...')
 
 
 @receiver(post_save, sender=Profile)
-def updateUser(sender, instance, created, **kwargs):
+def update_user(sender, instance, created, **kwargs):
   profile = instance
   user = profile.user
 
@@ -67,7 +69,7 @@ def save_original_password(sender, instance, **kwargs):
 
 
 @receiver(post_save, sender=User)
-def changeUserPassword(sender, instance, created, **kwargs):
+def change_user_password(sender, instance, created, **kwargs):
   if not created:
     original_password = getattr(instance, '_original_password', None)
 
@@ -92,9 +94,9 @@ def changeUserPassword(sender, instance, created, **kwargs):
 
 
 @receiver(post_delete, sender=Profile)
-def deleteUser(sender, instance, **kwargs):
+def delete_user(sender, instance, **kwargs):
   try:
     user = instance.user
     user.delete()
-  except:
-    pass
+  except Exception as e:
+    stdout.write(f'User could not be deleted: {str(e)}')

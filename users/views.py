@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import authenticate, get_user_model, login, logout, update_session_auth_hash
@@ -49,17 +50,23 @@ def registerPage(request):
   if request.method == 'POST':
     form = CustomUserCreationForm(request.POST)
     if form.is_valid(): 
-      user = form.save(commit=False)
-      user.username = user.username.lower()
-      user.save()
-      messages.success(request, 'User Account was created successfully! 🤗✅')
-      
-      if user is not None:
-          login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
-          # return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
-          return redirect('edit-account')
-      else:
-        messages.error(request, 'Login failed! ⚠️⚡')
+      try:
+        # The transaction.atomic() block ensures that all operations within it are atomic—meaning they all succeed or none of them do(including the signal that creates the profile).
+        with transaction.atomic():
+          user = form.save(commit=False)
+          user.username = user.username.lower()
+          user.save() # This triggers the post_save signal that creates the profile(same when the user was created using create())
+          messages.success(request, 'User Account was created successfully! 🤗✅')
+          
+          if user is not None:
+              login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
+              # return redirect(reverse('user-profile', args=[user.profile.id])) # Generates the URL for the profile view with the specified user_profile_id, redirect() takes the generated URL and redirects the user to that URL.
+              return redirect('edit-account')
+          else:
+            messages.error(request, 'Login failed! ⚠️⚡')
+
+      except Exception as e:
+        messages.error(request, f'An error has occurred during registration! ⚠️⚡: {str(e)}')
 
     else:
       messages.error(request, 'An error has occurred during registration! ⚠️⚡')
@@ -149,10 +156,10 @@ def editAccount(request):
   if request.method == 'POST':
     form = ProfileForm(request.POST, request.FILES, instance=profile)
     if form.is_valid():
-      form.save()
-      messages.success(request, f'Account updated successfully! 🤗✅')
-      return redirect('account')
-    
+      with transaction.atomic(): # This ensures that if any failures happen then both the profile and the user update in the signal rolled-back
+        form.save()
+        messages.success(request, f'Account updated successfully! 🤗✅')
+        return redirect('account')
     else:
       messages.error(request, f'Failed to update your account, try again! ⚡⚠️')
   

@@ -74,6 +74,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+
+            # Since my templatetags in not in an app folder but a normal project folder i.e shared folder
+            'libraries':{
+                'custom_filters': 'shared.templatetags.custom_filters',
+            }
         },
     },
 ]
