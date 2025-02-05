@@ -41,6 +41,7 @@ input.input[type='search'],
 input.input[type='email'],
 input.input[type='password'],
 input.input[type='number'],
+select.input,
 textarea.input {
   min-width: 24rem;
   width: 100%;
@@ -60,11 +61,11 @@ input.input[type='text']:active,
 input.input[type='email']:active,
 input.input[type='password']:active,
 input.input[type='number']:active,
-select.input,
-textarea.input:focus,
-textarea.input:active {
+select.input:focus,
+textarea.input:focus {
   outline: none;
   border: 2px solid var(--color-main);
+  box-shadow: 0 0 5px rgba(90, 165, 185, 0.7);
 }
 
 .form__field--radio,
@@ -101,8 +102,37 @@ textarea.input:active {
   min-height: 8rem;
 }
 
-/* Custom Radio & Checkbox */
+/* Custom Select field */
+.input.input--select {
+  /* appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none; */
+  background-color: #fff;
+  cursor: pointer;
+}
 
+/* Styles for the arrow */
+.input.input--select::after {
+  content: '';
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+  border-color: #888 transparent transparent transparent;
+  pointer-events: none;
+}
+
+/* Custom dropdown options */
+.input.input--select option {
+  padding: 10px;
+  background: #fff;
+  font-size: 1em;
+}
+
+/* Custom Radio & Checkbox */
 .input.input--checkbox,
 .input.input--radio {
   position: relative;

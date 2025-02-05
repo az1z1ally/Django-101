@@ -31,7 +31,7 @@ def loginUser(request):
           login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
           # return redirect(request.GET['next'] if 'next' in request.GET else '/')
           return redirect(next_url) # Redirect to the 'next' URL or the default URL
-          # messages.info(request, f'welcome back, {user.username} 🤗')
+          # messages.info(request, f'welcome back, {user.username} 👋')
         else:
           messages.error(request, 'Username or password is incorrect! ⚠️⚡')
       else:
@@ -56,7 +56,7 @@ def registerPage(request):
           user = form.save(commit=False)
           user.username = user.username.lower()
           user.save() # This triggers the post_save signal that creates the profile(same when the user was created using create())
-          messages.success(request, 'User Account was created successfully! 🤗✅')
+          messages.success(request, 'User Account was created successfully! 👍✅')
           
           if user is not None:
               login(request, user) # Persist a user id and a backend in the request. This way a user doesn't have to reauthenticate on every request.
@@ -90,7 +90,7 @@ def changePassword(request):
     if form.is_valid():
       user = form.save()
       update_session_auth_hash(request, user)  # Important to update the session with the new password
-      messages.success(request, 'Your password was successfully updated! 🤗✅')
+      messages.success(request, 'Your password was successfully updated! 👍✅')
       return redirect(next_url)
     
     else:
@@ -104,7 +104,7 @@ def changePassword(request):
 def logoutUser(request):
   url_with_parameters = get_redirect_url(request, 'login')
   logout(request) # Remove the authenticated user's ID from the request and flush their session data
-  messages.info(request, 'User was logged out successfully! 🤗')
+  messages.info(request, 'User was logged out successfully! 👍✅')
 
   # Redirect to the URL with parameters
   return redirect(url_with_parameters)
@@ -133,7 +133,7 @@ def userProfile(request, pk):
     # Handle the case where multiple objects are returned
     return render(request, 'error.html')
   
-  topSkills = profile.skill_set.exclude(description__exact='')
+  topSkills = profile.skill_set.exclude(description__isnull=True).exclude(description__exact='')
   otherSkills = profile.skill_set.filter(description='')
   projects_gt_5 = profile.projects.all().count() > 5
   projects = profile.projects.all()[:5]
@@ -160,7 +160,7 @@ def editAccount(request):
     if form.is_valid():
       with transaction.atomic(): # This ensures that if any failures happen then both the profile and the user update in the signal rolled-back
         form.save()
-        messages.success(request, f'Account updated successfully! 🤗✅')
+        messages.success(request, f'Account updated successfully! 👍✅')
         return redirect('account')
     else:
       messages.error(request, f'Failed to update your account, try again! ⚡⚠️')
@@ -187,11 +187,18 @@ def createSkill(request):
 
   if request.method == 'POST':
     form = SkillForm(request.POST)
+
     if form.is_valid():
+      # Enforce case-insensitive uniqueness(owner and skill)
+      name = request.POST.get('name', '')
+      if profile.skill_set.filter(name__iexact=name).exists():
+        messages.error(request, f'Skill already exist, try adding a different skill! ⚡⚠️')
+        return redirect(next_url)
+
       skill = form.save(commit=False)
       skill.owner = profile
       skill.save()
-      messages.success(request, f'Skill added successfully! 🤗✅')
+      messages.success(request, f'Skill added successfully! 👍✅')
       return redirect(next_url)
     
     else:
@@ -216,7 +223,7 @@ def editSkill(request, pk):
     form = SkillForm(request.POST, instance=skill)
     if form.is_valid():
       form.save()
-      messages.success(request, f'Skill updated successfully! 🤗✅')
+      messages.success(request, f'Skill updated successfully! 👍✅')
       return redirect(next_url)
     
     else:
@@ -237,7 +244,7 @@ def deleteSkill(request, pk):
 
   if request.POST:
     skill.delete()
-    messages.success(request, f'Skill removed successfully! 🤗✅')
+    messages.success(request, f'Skill removed successfully! 👍✅')
     return redirect(next_url)
   
   context = {'object': skill}

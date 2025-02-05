@@ -416,7 +416,6 @@ img {
 .devSkill__info {
   font-size: 1.45rem;
   line-height: 1.7;
-  text-align: justify;
 }
 
 .devSkill {
@@ -572,11 +571,6 @@ img {
   margin-top: 4rem;
   padding-top: 3rem;
   border-top: 2px solid var(--color-light);
-}
-
-.comments .form label {
-  position: absolute;
-  margin: -9999px;
 }
 
 .commentList {

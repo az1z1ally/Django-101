@@ -1,5 +1,7 @@
 {% extends 'main.html' %}
 
+{% load custom_filters %}
+
 {% block content %}
 
 <!-- Main Section -->
@@ -51,44 +53,46 @@
                         {{project.votes_ratio}}% Positive Feedback ({{project.votes_total}}) Vote{{project.votes_total | pluralize:"s"}}
                     </h5>
 
-                    {% if request.user.profile.id in project.reviewers %}
-                    <p>You have already submitted your review for this project</p>
+                    {% if request.user.profile.id in project.get_reviewers_ids %}
+                    <p>You have already submitted your review for this project 👍</p>
 
                     {% elif project.owner and  project.owner == request.user.profile %}
-                    <p>You cannot review your own work</p>
+                    <p>You cannot review your own work 🚫</p>
 
                     {% elif request.user.is_authenticated %}
-                    <form class="form" action="{% url 'project' project.id %}" method="POST">
+                    <form class="form" action="{% url 'add-project-review' project.id %}" method="POST">
                         {% csrf_token %}
+
                         {% for field in form %}
                         <div class="form__field">
                             <label for="{{field.id_for_label}}">{{field.label}}</label>
-                            {{field}}
+                            {{ field }}
                         </div>
                         {% endfor %}
+
                         <input class="btn btn--sub btn--lg" type="submit" value="Add Review" />
                     </form>
+
                     {% else %}
                     <a href="{% url 'login' %}?next={{request.path}}">Please login to leave a review</a>
                     {% endif %}
 
                     <div class="commentList">
-                        {% for review in project.review_set.all %}
-                        {% if review.body %}
-                        <div class="comment">
-                            <a href="">
-                                <img class="avatar avatar--md" src="{{review.owner.profile_image.url}}" alt="user" />
-                            </a>
+                        {% for review in reviews_with_body %}
+                            {% if review.body %}
+                            <div class="comment">
+                                <a href="{% url 'profile' review.owner.id %}">
+                                    <img class="avatar avatar--sm" src="{{review.owner.imageURL}}" alt="user" />
+                                </a>
 
+                                <div class="comment__details">
+                                    <a href="{% url 'profile' review.owner.id %}"
+                                        class="comment__author">{{review.owner.first_name}} {{review.owner.last_name}}</a>
+                                    <p class="comment__info">{{review.body | linebreaksbr}}</p>
+                                </div>
 
-                            <div class="comment__details">
-                                <a href=""
-                                    class="comment__author">{{review.owner.name}}</a>
-                                <p class="comment__info">{{review.body | linebreaksbr}}</p>
                             </div>
-
-                        </div>
-                        {% endif %}
+                            {% endif %}
                         {% endfor %}
 
                     </div>
