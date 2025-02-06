@@ -1,3 +1,4 @@
+from sys import stdout
 from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -56,9 +57,18 @@ class Review(BaseModel):
     # Ensure user can not review their own project
     if self.owner and self.owner == self.project.owner:
       raise ValidationError(f'You can not review your own project!')
+    
+    # Ensure only owner can edit their review
+    if not self._state.adding: # Since we are using UUID field for the pk and not sequential column which is set at db level(if self.pk will always be true for new & existing instances)
+      try:
+        original_review = Review.objects.get(pk=self.pk)
+        if self.owner != original_review.owner:
+          raise ValidationError('You are not authorized to edit this review. ⚠️⚡')
+      except Review.DoesNotExist as e:
+        stdout.write(f'Failed to update the review: {str(e)}')
 
   def save(self, *args, **kwargs):
-    if Review.objects.filter(pk=self.pk).exists():  # Check if the review already exists, update the last_edited field
+    if not self._state.adding:  # Check if the review already exists, update the last_edited field
       self.last_edited = timezone.now()
 
     self.full_clean() # This will call the clean() method

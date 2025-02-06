@@ -63,8 +63,8 @@ def update_user(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=User)
 def save_original_password(sender, instance, **kwargs):
   try:
-    instance._original_password = User.objects.get(pk=instance.pk).password
-  except User.DoesNotExist:
+    instance._original_password = sender.objects.get(pk=instance.pk).password
+  except sender.DoesNotExist:
     instance._original_password = None
 
 

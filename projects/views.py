@@ -189,7 +189,7 @@ def editProjectReview(request, review_id):
           return redirect('project', pk=review.project.id)
       
       except Exception as e:
-        messages.error(request, f'{e} ⚠️⚡')
+        messages.error(request, f'{str(e)} ⚠️⚡')
         return render(request, 'error.html')
     else:
       messages.error(request, 'Failed to update the review. ⚠️⚡')
