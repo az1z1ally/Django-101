@@ -1,5 +1,64 @@
+
+
 :root {
   --color-sub: #2d2d39;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.025);
+  --box-shadow1: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --box-shadow2: 0 2px 4px rgba(0, 0, 0, 0.075);
+}
+
+.glass-0 {
+  background: rgba(255, 2555, 255, 0.2) !important;
+  backdrop-filter: blur(32px);
+  box-shadow: var(--box-shadow) !important;
+}
+
+.glass-1 {
+  background: rgba(255, 2555, 255, 0.4) !important;
+  backdrop-filter: blur(48px);
+  box-shadow: var(--box-shadow) !important;
+}
+
+.glass-2 {
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(48px);
+  box-shadow: var(--box-shadow1) !important;
+}
+
+.glass-3 {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(72px);
+  box-shadow: var(--box-shadow2) !important;
+}
+
+.glass-logo {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(48px);
+  box-shadow: var(--box-shadow) !important;
+}
+
+.glass-toolbar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(62px);
+  box-shadow: var(--box-shadow) !important;
+}
+
+.glass-sidebar {
+  background: rgba(255, 2555, 255, 0.7) !important;
+  backdrop-filter: blur(32px);
+  box-shadow: var(--box-shadow2) !important;
+}
+
+.glass-table {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(48px);
+  box-shadow: var(--box-shadow2) !important;
+}
+
+.glass-auth {
+  background: rgba(255, 2555, 255, 0.75) !important;
+  backdrop-filter: blur(32px);
+  box-shadow: var(--box-shadow) !important;
 }
 
 .btn--sub {
@@ -578,6 +637,7 @@ img {
 }
 
 .comment {
+  position: relative;
   display: flex;
   gap: 2rem;
 }
@@ -593,6 +653,54 @@ img {
 .comment__info {
   font-size: 1.45rem;
 }
+
+.comment__meta {
+  font-size: 1.25rem;
+}
+
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 1.35rem;
+}
+
+.dropdown summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.dropdown summary::-webkit-details-marker {
+  display: none;
+}
+
+.dropdown summary > i.im{
+  font-size: 14px;
+}
+
+.dropdown .dropdown__menu {
+  position: absolute;
+  top: 100%;
+  right: 100%;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 4px;
+}
+
+.dropdown .dropdown__menu .dropdown__item{
+  display: flex;
+  align-items: center;
+  color: var(--color-text);
+}
+
+.dropdown .dropdown__menu .dropdown__item i.im{
+  font-size: 1.75rem;
+  margin-right: 0.75rem;
+}
+
 
 /*=======================
   Account Settings

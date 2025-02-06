@@ -1,4 +1,6 @@
 from django import template
+from django.utils.timesince import timesince
+from django.utils import timezone
 
 register = template.Library()
 
@@ -11,8 +13,6 @@ def add_class(field, arg):
 def add_placeholder(field, arg):
   # modify the form field widget to include the specified placeholder text.
   return field.as_widget(attrs={'placeholder': arg})
-
-
 
 # register = template.Library(): This creates a new template library where you can register your custom filters and tags.
 

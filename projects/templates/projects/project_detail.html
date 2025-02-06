@@ -53,14 +53,18 @@
                         {{project.votes_ratio}}% Positive Feedback ({{project.votes_total}}) Vote{{project.votes_total | pluralize:"s"}}
                     </h5>
 
-                    {% if request.user.profile.id in project.get_reviewers_ids %}
+                    {% if request.user.profile.id in project.get_reviewers_ids and not edit_mode %}
                     <p>You have already submitted your review for this project 👍</p>
 
                     {% elif project.owner and  project.owner == request.user.profile %}
                     <p>You cannot review your own work 🚫</p>
 
                     {% elif request.user.is_authenticated %}
-                    <form class="form" action="{% url 'add-project-review' project.id %}" method="POST">
+                    <form 
+                        class="form"
+                        action="{% if edit_mode %}{% url 'edit-project-review' review_id %}{% else %}{% url 'add-project-review' project.id %}{% endif %}"
+                        method="POST"
+                    >
                         {% csrf_token %}
 
                         {% for field in form %}
@@ -70,7 +74,12 @@
                         </div>
                         {% endfor %}
 
-                        <input class="btn btn--sub btn--lg" type="submit" value="Add Review" />
+                        <div class="form__field--action">
+                            {% if edit_mode %}
+                            <a class="btn btn--md" href="{{request.META.HTTP_REFERER|default:'/'}}">Cancel</a>
+                            {% endif %}
+                            <input class="btn btn--sub btn--md" type="submit" value="{% if edit_mode %}Update{% else %}Save{% endif %}" />
+                        </div>
                     </form>
 
                     {% else %}
@@ -79,20 +88,37 @@
 
                     <div class="commentList">
                         {% for review in reviews_with_body %}
-                            {% if review.body %}
                             <div class="comment">
+                                {% if review.owner == request.user.profile %}
+                                    <details class="dropdown">
+                                        <summary class="menuSummary">
+                                            <i class="im im-menu-dot-h"></i>
+                                        </summary>
+                                        <div class="dropdown__menu glass-2">
+                                            <a href="{% url 'project-review-id' project.id review.id %}" class="dropdown__item"><i class="im im-pencil"></i>Edit</a>
+                                            <a href="{% url 'delete-project-review' review.id %}" class="dropdown__item"><i class="im im-trash-can"></i>Delete</a>
+                                        </div>
+                                    </details>
+                                {% endif %}
+
                                 <a href="{% url 'profile' review.owner.id %}">
                                     <img class="avatar avatar--sm" src="{{review.owner.imageURL}}" alt="user" />
                                 </a>
 
                                 <div class="comment__details">
                                     <a href="{% url 'profile' review.owner.id %}"
-                                        class="comment__author">{{review.owner.first_name}} {{review.owner.last_name}}</a>
+                                        class="comment__author">{{review.owner.first_name}} {{review.owner.last_name}}
+                                    </a>
+                                    <div class="comment__meta">
+                                        <small class="created__on">{{ review.created_on|timesince }} ago.</small>
+                                        {% if review.last_edited %}
+                                        <small class="edited"><em>(edited)</em></small>
+                                        {% endif %}
+                                    </div>
+
                                     <p class="comment__info">{{review.body | linebreaksbr}}</p>
                                 </div>
-
                             </div>
-                            {% endif %}
                         {% endfor %}
 
                     </div>

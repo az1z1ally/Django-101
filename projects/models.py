@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
 from shared.models import BaseModel
@@ -46,6 +47,7 @@ class Review(BaseModel):
   project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='project_reviews')
   body = models.TextField(null=True, blank=True)
   value = models.CharField(max_length=20, choices=[(vote.value, vote.name) for vote in VoteType])
+  last_edited = models.DateTimeField(null=True, blank=True)
 
   class Meta:
     unique_together = (('owner', 'project'),)  # Ensure user can submit only one review(no two instances of the reviews belongs to the same owner on the same project)
@@ -56,6 +58,9 @@ class Review(BaseModel):
       raise ValidationError(f'You can not review your own project!')
 
   def save(self, *args, **kwargs):
+    if Review.objects.filter(pk=self.pk).exists():  # Check if the review already exists, update the last_edited field
+      self.last_edited = timezone.now()
+
     self.full_clean() # This will call the clean() method
     super(Review, self).save(*args, **kwargs)
 
