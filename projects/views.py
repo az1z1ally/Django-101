@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.db import transaction
 
 from .forms import ProjectForm, ReviewForm
-from .models import Project, Review
+from .models import Project
 
 # Create your views here.
 def projects(request):
@@ -182,10 +182,15 @@ def editProjectReview(request, review_id):
     form = ReviewForm(request.POST, instance=review)
 
     if form.is_valid():
-      with transaction.atomic(): # To ensure the entire project db operations(i.e. post_save signal) done or nothing is done
-        form.save()
-        messages.success(request, 'Review updated successfully. 👍✅')
-        return redirect('project', pk=review.project.id)
+      try:
+        with transaction.atomic(): # To ensure the entire project db operations(i.e. post_save signal) done or nothing is done
+          form.save()
+          messages.success(request, 'Review updated successfully. 👍✅')
+          return redirect('project', pk=review.project.id)
+      
+      except Exception as e:
+        messages.error(request, f'{e} ⚠️⚡')
+        return render(request, 'error.html')
     else:
       messages.error(request, 'Failed to update the review. ⚠️⚡')
 
@@ -202,14 +207,12 @@ def deleteProjectReview(request, review_id):
   except ObjectDoesNotExist:
     # Handle the case where the project does not exist
     return render(request, '404.html', status=404)
-  
-  project_id = review.project.id
 
   if request.method == 'POST':
     with transaction.atomic(): # To ensure the entire project db operations(i.e. post-delete signal ) done or nothing is done
       review.delete()
       messages.success(request, 'Review deleted successfully. 👍✅')
-      return redirect('project', pk=project_id)
+      return redirect('project', pk=review.project.id)
 
   context = {'object': review}
   return render(request, 'delete_template.html', context)

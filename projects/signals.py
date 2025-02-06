@@ -19,4 +19,4 @@ def ensure_owner_can_edit(sender, instance, **kwargs):
         raise ValueError('You are not authorized to edit this review. ⚠️⚡')
     except sender.DoesNotExist:
       # Handle the case where the review does not exist
-      pass
+      raise ValueError('Object not found! ⚠️⚡')

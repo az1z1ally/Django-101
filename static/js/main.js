@@ -10,26 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
         summary.parentNode.removeAttribute('open');
       }
     });
-  });
-
-  // Add event listeners for focus and blur for each summary
-  summaries.forEach(summary => {
-    const details = summary.parentNode;
-
-    // Add focus and blur events to handle closing the details
-    summary.addEventListener('focus', function() {
-      details.setAttribute('data-focus', 'true');  // Custom attribute to track focus
-    });
-
-    summary.addEventListener('blur', function(event) {
-      // Delay to allow for checking if focus moved within the details
-      setTimeout(() => {
-        if (!details.contains(document.activeElement)) {
-          details.removeAttribute('open');
-        }
-        details.removeAttribute('data-focus');  // Remove custom attribute
-      }, 1);
-    });
 
     // Ensure the summary element can receive focus
     summary.setAttribute('tabindex', '0');
