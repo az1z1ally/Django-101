@@ -63,3 +63,19 @@ class Skill(BaseModel):
 
   def __str__(self):
     return str(self.name)
+  
+
+class Message(BaseModel):
+  sender = models.ForeignKey(Profile, on_delete=models.SET_NULL, null=True, blank=True, related_name='sent_messages')
+  recipient = models.ForeignKey(Profile, on_delete=models.CASCADE, null=True, blank=True, related_name='received_messages')
+  name = models.CharField(max_length=80)
+  email= models.EmailField(max_length=200, null=True, blank=True)
+  subject = models.CharField(max_length=200, null=True, blank=True)
+  body = models.TextField()
+  is_read = models.BooleanField(default=False, null=True)
+
+  class Meta:
+    ordering = ['is_read', '-created_on']
+
+  def __str__(self):
+    return f'{self.name} {self.created_on}'
