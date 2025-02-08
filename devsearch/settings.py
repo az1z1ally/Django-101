@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # Created apps
     'projects.apps.ProjectsConfig',
     'users.apps.UsersConfig',
+    'chats.apps.ChatsConfig',
 ]
 
 MIDDLEWARE = [
